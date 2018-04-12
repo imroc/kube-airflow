@@ -19,10 +19,10 @@ clean:
 	rm -Rf build
 
 build: $(DOCKERFILE) $(ROOTFS) $(AIRFLOW_CONF) $(ENTRYPOINT_SH)
-	cd $(BUILD_ROOT) && docker build -t $(IMAGE) . && docker tag $(IMAGE) $(ALIAS)
+	cd $(BUILD_ROOT) && docker build -t $(IMAGE) .
 
 publish:
-	docker push $(IMAGE) && docker push $(ALIAS)
+	docker push $(IMAGE)
 
 $(DOCKERFILE): $(BUILD_ROOT)
 	sed -e 's/%%AIRFLOW_VERSION%%/'"$(AIRFLOW_VERSION)"'/g;' Dockerfile.template > $(DOCKERFILE)
