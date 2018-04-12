@@ -1,21 +1,17 @@
-AIRFLOW_VERSION ?= 1.8.0.0
-KUBECTL_VERSION ?= 1.6.1
-KUBE_AIRFLOW_VERSION ?= 0.10
+REPOSITORY ?= ccr.ccs.tencentyun.com/apache/airflow
+AIRFLOW_VERSION ?= 1.8.0
 
-REPOSITORY ?= mumoshu/kube-airflow
-TAG ?= $(AIRFLOW_VERSION)-$(KUBECTL_VERSION)-$(KUBE_AIRFLOW_VERSION)
-IMAGE ?= $(REPOSITORY):$(TAG)
-ALIAS ?= $(REPOSITORY):$(AIRFLOW_VERSION)-$(KUBECTL_VERSION)
-
+IMAGE ?= $(REPOSITORY):$(AIRFLOW_VERSION)
 BUILD_ROOT ?= build/$(TAG)
 DOCKERFILE ?= $(BUILD_ROOT)/Dockerfile
 ROOTFS ?= $(BUILD_ROOT)/rootfs
 AIRFLOW_CONF ?= $(BUILD_ROOT)/config/airflow.cfg
 ENTRYPOINT_SH ?= $(BUILD_ROOT)/script/entrypoint.sh
 DOCKER_CACHE ?= docker-cache
-SAVED_IMAGE ?= $(DOCKER_CACHE)/image-$(AIRFLOW_VERSION)-$(KUBECTL_VERSION).tar
+SAVED_IMAGE ?= $(DOCKER_CACHE)/image-$(AIRFLOW_VERSION).tar
 
 NAMESPACE ?= airflow-dev
+
 
 .PHONY: build clean
 
@@ -29,7 +25,7 @@ publish:
 	docker push $(IMAGE) && docker push $(ALIAS)
 
 $(DOCKERFILE): $(BUILD_ROOT)
-	sed -e 's/%%KUBECTL_VERSION%%/'"$(KUBECTL_VERSION)"'/g;' -e 's/%%AIRFLOW_VERSION%%/'"$(AIRFLOW_VERSION)"'/g;' Dockerfile.template > $(DOCKERFILE)
+	sed -e 's/%%AIRFLOW_VERSION%%/'"$(AIRFLOW_VERSION)"'/g;' Dockerfile.template > $(DOCKERFILE)
 
 $(ROOTFS): $(BUILD_ROOT)
 	mkdir -p rootfs
